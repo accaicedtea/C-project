@@ -11,12 +11,12 @@ typedef void PGresult;
 #endif
 
 typedef struct {
-  PGconn *conn;
-  gchar *connection_string;
+    PGconn *conn;
+    gchar *connection_string;
 } DBConnection;
 
-DBConnection *db_connection_new(const gchar *host, const gchar *user,
-                                const gchar *password, const gchar *dbname);
+DBConnection *db_connection_new(const gchar *host, const gchar *user, const gchar *password,
+                                const gchar *dbname);
 void db_connection_free(DBConnection *db);
 
 gboolean db_connection_connect(DBConnection *db);
