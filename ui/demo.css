@@ -1,0 +1,170 @@
+/* GTK4 Gesture Demo Stylesheet */
+
+/* Header styling */
+.demo-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.demo-header .title-1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.demo-header .dim-label {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+}
+
+/* Section titles */
+.section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #1f2937;
+    margin: 8px 0;
+}
+
+/* Gesture boxes - Tap */
+.demo-tap-box {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+    padding: 12px;
+    transition: all 200ms ease-in-out;
+    border: 2px solid transparent;
+}
+
+.demo-tap-box:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.demo-tap-active {
+    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    transform: scale(0.95);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Pulse animation */
+@keyframes pulse-animation {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.demo-pulse {
+    animation: pulse-animation 600ms ease-in-out;
+}
+
+/* Highlight for long press */
+.demo-highlight {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 2px solid #b45309;
+}
+
+/* Swipe gestures */
+.demo-swipe-box {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+    padding: 16px;
+    transition: all 200ms ease-in-out;
+    border: 2px solid transparent;
+}
+
+.demo-swipe-left {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+    transform: translateX(-20px);
+    box-shadow: -4px 0 12px rgba(139, 92, 246, 0.4);
+}
+
+.demo-swipe-right {
+    background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+    transform: translateX(20px);
+    box-shadow: 4px 0 12px rgba(236, 72, 153, 0.4);
+}
+
+.demo-swipe-up {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    transform: translateY(-20px);
+    box-shadow: 0 -4px 12px rgba(6, 182, 212, 0.4);
+}
+
+.demo-swipe-down {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    transform: translateY(20px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+}
+
+/* Pan gesture */
+.demo-pan-box {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+    color: white;
+    border-radius: 8px;
+    font-weight: bold;
+    padding: 16px;
+    transition: all 200ms ease-in-out;
+    border: 2px solid transparent;
+}
+
+.demo-pan-active {
+    border: 2px solid #14b8a6;
+    box-shadow: inset 0 2px 8px rgba(20, 184, 166, 0.3);
+}
+
+/* Canvas for pinch/rotate */
+.demo-canvas {
+    background: #f3f4f6;
+    border-radius: 8px;
+    border: 2px solid #d1d5db;
+    transition: all 200ms ease-in-out;
+}
+
+.demo-canvas:active {
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Counter labels */
+.counter-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #1f2937;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+    margin: 8px 0;
+}
+
+/* Event log */
+.demo-log {
+    font-family: 'Monospace', monospace;
+    font-size: 12px;
+    color: #374151;
+    line-height: 1.6;
+    background: #f9fafb;
+    padding: 8px;
+    border-radius: 4px;
+    border-left: 3px solid #3b82f6;
+}
+
+/* General styling */
+button:active {
+    opacity: 0.9;
+}
+
+label.dim-label {
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 500;
+}

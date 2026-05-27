@@ -1,0 +1,108 @@
+/* Global application styles */
+
+* {
+    all: unset;
+}
+
+window {
+    background-color: @theme_bg_color;
+    color: @theme_fg_color;
+    font-family: "Sans";
+    font-size: 10pt;
+}
+
+label {
+    color: @theme_fg_color;
+}
+
+label.title {
+    font-weight: bold;
+    font-size: 16pt;
+    margin-bottom: 10px;
+}
+
+label.heading {
+    font-weight: 600;
+    font-size: 12pt;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/* Entry styling */
+entry {
+    padding: 8px;
+    border: 1px solid @borders;
+    border-radius: 4px;
+    background-color: @theme_base_color;
+    color: @theme_text_color;
+    min-height: 36px;
+}
+
+entry:focus {
+    border: 2px solid @theme_selected_bg_color;
+    outline: none;
+}
+
+/* Button styling */
+button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+    border: none;
+    font-weight: 500;
+    min-height: 36px;
+    min-width: 80px;
+}
+
+button:hover {
+    background-color: @theme_accent_color;
+    opacity: 0.9;
+}
+
+button:active {
+    background-color: @theme_accent_color;
+    opacity: 1;
+}
+
+/* Box styling - spacing handled via margin/padding in GTK4 */
+box {
+    margin: 5px;
+}
+
+/* ListBox styling */
+listbox {
+    background-color: @theme_base_color;
+    border-radius: 4px;
+}
+
+listbox row {
+    padding: 8px;
+    border-bottom: 1px solid @borders;
+    background-color: transparent;
+}
+
+listbox row:selected {
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+}
+
+listbox row:hover {
+    background-color: mix(@theme_selected_bg_color, @theme_base_color, 0.2);
+}
+
+/* ScrolledWindow styling */
+scrolledwindow {
+    border: 1px solid @borders;
+    border-radius: 4px;
+}
+
+/* Light theme customization */
+@define-color theme_bg_color #ffffff;
+@define-color theme_fg_color #1a1a1a;
+@define-color theme_base_color #f8f8f8;
+@define-color theme_text_color #333333;
+@define-color theme_selected_bg_color #4c7ff0;
+@define-color theme_selected_fg_color #ffffff;
+@define-color theme_accent_color #357abd;
+@define-color borders #e0e0e0;

@@ -1,0 +1,47 @@
+# Build artifacts
+build/
+*.o
+*.a
+*.so
+*.dylib
+gtkapp
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Compiled output
+*.out
+*.exe
+
+# Dependencies
+*.d
+
+# Debug files
+*.gdb_history
+core
+core.*
+vgcore.*
+
+# CMake (if used)
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+
+# Database and logs
+*.db
+*.log
+*.pid
+
+# Temporary files
+.tmp/
+*.tmp
+
+# Distribution
+dist/
+*.tar.gz
+*.zip
