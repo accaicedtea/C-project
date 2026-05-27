@@ -54,11 +54,11 @@ jobs:
           gcc -target arm64-apple-macos11 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -c src/utils/gesture_manager.c -o build-arm64/gesture_manager.o
           gcc -target arm64-apple-macos11 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -c src/utils/animations.c -o build-arm64/animations.o
           gcc -target arm64-apple-macos11 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -o build/gtkapp-arm64 build-arm64/*.o src/*.c src/**/*.c $(pkg-config --cflags --libs gtk4) -lm
-          
+
           gcc -target x86_64-apple-macos10.12 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -c src/utils/gesture_manager.c -o build-x64/gesture_manager.o
           gcc -target x86_64-apple-macos10.12 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -c src/utils/animations.c -o build-x64/animations.o
           gcc -target x86_64-apple-macos10.12 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -o build/gtkapp-x86_64 build-x64/*.o src/*.c src/**/*.c $(pkg-config --cflags --libs gtk4) -lm
-          
+
           lipo -create -output build/gtkapp build/gtkapp-arm64 build/gtkapp-x86_64
 
       - name: Bundle into .app
@@ -67,7 +67,7 @@ jobs:
           mkdir -p GtkApp.app/Contents/Resources
           cp build/gtkapp GtkApp.app/Contents/MacOS/
           cp flatpak/Info.plist GtkApp.app/Contents/
-          cp flatpak/icon.icns GtkApp.app/Contents/Resources/
+          if [ -f flatpak/icon.icns ]; then cp flatpak/icon.icns GtkApp.app/Contents/Resources/; fi
 
       - name: Create .dmg
         run: hdiutil create -volname "GtkApp" -srcfolder "GtkApp.app" -ov -format UDZO "GtkApp.dmg"
