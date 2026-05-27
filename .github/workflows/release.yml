@@ -5,37 +5,9 @@ on:
     types: [published]
 
 jobs:
-  # LINUX – Flatpak
-  linux-flatpak:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-47
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cache Flatpak builder
-        uses: actions/cache@v3
-        with:
-          path: .flatpak-builder
-          key: flatpak-builder-gnome47-${{ hashFiles('flatpak/io.github.tuouser.GtkApp.json', 'src/**', 'include/**') }}
-          restore-keys: flatpak-builder-gnome47-
-
-      - name: Build Flatpak
-        uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
-        with:
-          bundle: gtkapp.flatpak
-          manifest-path: flatpak/io.github.tuouser.GtkApp.json
-          cache: true
-
-      - name: Upload Flatpak to Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: gtkapp.flatpak
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # LINUX – Flatpak (DISABLED: bwrap namespace issues on GitHub Actions container)
+  # To build locally: flatpak-builder --repo=repo flatpak_app flatpak/io.github.accaicedtea.GtkApp.json
+  # Then: flatpak build-bundle repo gtkapp.flatpak io.github.accaicedtea.GtkApp
 
   # MACOS – .dmg
   macos-dmg:
