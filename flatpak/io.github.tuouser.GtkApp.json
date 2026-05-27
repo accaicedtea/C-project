@@ -29,8 +29,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/tuouser/gtkapp.git",
-                    "commit": "@COMMIT@"
+                    "url": "https://github.com/accaicedtea/C-project.git",
+                    "branch": "main"
                 }
             ]
         }
