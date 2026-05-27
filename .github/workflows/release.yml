@@ -9,17 +9,24 @@ jobs:
   linux-flatpak:
     runs-on: ubuntu-latest
     container:
-      image: bilelmoussaoui/flatpak-github-actions:gnome-46
+      image: bilelmoussaoui/flatpak-github-actions:gnome-48
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Cache Flatpak builder
+        uses: actions/cache@v3
+        with:
+          path: .flatpak-builder
+          key: flatpak-builder-gnome48-${{ hashFiles('flatpak/io.github.tuouser.GtkApp.json', 'src/**', 'include/**') }}
+          restore-keys: flatpak-builder-gnome48-
 
       - name: Build Flatpak
         uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
         with:
           bundle: gtkapp.flatpak
           manifest-path: flatpak/io.github.tuouser.GtkApp.json
-          cache-key: flatpak-builder-${{ github.sha }}
+          cache: true
 
       - name: Upload Flatpak to Release
         uses: softprops/action-gh-release@v2
@@ -35,13 +42,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install GTK4
-        run: brew install gtk4
+      - name: Cache Homebrew packages
+        uses: actions/cache@v3
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: macos-homebrew-${{ hashFiles('.github/workflows/release.yml') }}
+          restore-keys: macos-homebrew-
+
+      - name: Cache ccache
+        uses: actions/cache@v3
+        with:
+          path: ~/Library/Caches/ccache
+          key: macos-ccache-${{ hashFiles('src/**', 'include/**') }}
+          restore-keys: macos-ccache-
+
+      - name: Install GTK4 and dependencies
+        run: brew install gtk4 libpq ccache
 
       - name: Build binary
         run: |
           mkdir -p build
-          gcc -O2 -Wall -Wextra -std=c11 -Iinclude $(pkg-config --cflags gtk4) -o build/gtkapp src/utils/gesture_manager.c src/utils/animations.c src/main.c src/controller/app_controller.c src/model/app_model.c src/utils/db_connection.c src/view/app_view.c $(pkg-config --libs gtk4) -lm
+          export PATH="/usr/local/opt/ccache/libexec:$PATH"
+          gcc -O2 -Wall -Wextra -std=c11 -Iinclude $(pkg-config --cflags gtk4 libpq) -o build/gtkapp src/utils/gesture_manager.c src/utils/animations.c src/main.c src/controller/app_controller.c src/model/app_model.c src/utils/db_connection.c src/view/app_view.c $(pkg-config --libs gtk4 libpq) -lm
 
       - name: Create app bundle
         run: |

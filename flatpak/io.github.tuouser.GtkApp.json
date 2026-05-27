@@ -1,7 +1,7 @@
 {
     "app-id": "io.github.accaicedtea.GtkApp",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "47",
+    "runtime-version": "48",
     "sdk": "org.gnome.Sdk",
     "command": "gtkapp",
     "finish-args": [
@@ -23,7 +23,7 @@
             "name": "gtkapp",
             "buildsystem": "simple",
             "build-commands": [
-                "gcc -Wall -Wextra -Werror -O2 -std=c11 $(pkg-config --cflags gtk4) -o gtkapp src/utils/gesture_manager.c src/utils/animations.c src/*.c src/**/*.c $(pkg-config --libs gtk4) -lm",
+                "gcc -Wall -Wextra -Werror -O2 -std=c11 -Iinclude $(pkg-config --cflags gtk4 libpq) -o gtkapp src/utils/gesture_manager.c src/utils/animations.c src/main.c src/controller/app_controller.c src/model/app_model.c src/utils/db_connection.c src/view/app_view.c $(pkg-config --libs gtk4 libpq) -lm",
                 "install -Dm755 gtkapp /app/bin/gtkapp"
             ],
             "sources": [
