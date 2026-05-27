@@ -2,7 +2,13 @@
 #define DB_CONNECTION_H
 
 #include <glib.h>
+
+#ifdef HAVE_LIBPQ
 #include <libpq-fe.h>
+#else
+typedef void PGconn;
+typedef void PGresult;
+#endif
 
 typedef struct {
   PGconn *conn;

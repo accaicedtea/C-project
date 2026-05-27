@@ -28,7 +28,7 @@
             "name": "gtkapp",
             "buildsystem": "simple",
             "build-commands": [
-                "export PKG_CONFIG_PATH=/app/lib/pkgconfig:/app/share/pkgconfig:$PKG_CONFIG_PATH && gcc -Wall -Wextra -Werror -O2 -std=c11 -Iinclude $(pkg-config --cflags gtk4) -o gtkapp src/utils/gesture_manager.c src/utils/animations.c src/main.c src/controller/app_controller.c src/model/app_model.c src/view/app_view.c $(pkg-config --libs gtk4) -lm && install -Dm755 gtkapp /app/bin/gtkapp"
+                "export PKG_CONFIG_PATH=/app/lib/pkgconfig:/app/share/pkgconfig:$PKG_CONFIG_PATH && gcc -Wall -Wextra -Werror -O2 -std=c11 -DHAVE_LIBPQ=0 -Iinclude $(pkg-config --cflags gtk4) -o gtkapp src/utils/gesture_manager.c src/utils/animations.c src/main.c src/controller/app_controller.c src/model/app_model.c src/view/app_view.c $(pkg-config --libs gtk4) -lm && install -Dm755 gtkapp /app/bin/gtkapp"
             ],
             "sources": [
                 {
