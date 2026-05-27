@@ -23,7 +23,7 @@ jobs:
         run: |
           mkdir -p ~/.local/share/flatpak
           flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-          flatpak-builder --user --disable-rofiles-fuse --install-deps-from=flathub --repo=repo flatpak_app flatpak/io.github.accaicedtea.GtkApp.json
+          flatpak-builder --user --disable-rofiles-fuse --install-deps-from=flathub --repo=repo flatpak_app flatpak/io.github.tuouser.GtkApp.json
           flatpak build-bundle repo gtkapp.flatpak io.github.accaicedtea.GtkApp
 
       - name: Upload Flatpak to Release
