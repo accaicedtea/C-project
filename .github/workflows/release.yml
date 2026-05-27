@@ -41,7 +41,7 @@ jobs:
       - name: Build binary
         run: |
           mkdir -p build
-          gcc -O2 -Wall -Wextra -std=c11 $(pkg-config --cflags gtk4) -o build/gtkapp src/utils/gesture_manager.c src/utils/animations.c src/*.c src/**/*.c $(pkg-config --libs gtk4) -lm
+          gcc -O2 -Wall -Wextra -std=c11 -Iinclude $(pkg-config --cflags gtk4) -o build/gtkapp src/utils/gesture_manager.c src/utils/animations.c src/main.c src/controller/app_controller.c src/model/app_model.c src/utils/db_connection.c src/view/app_view.c $(pkg-config --libs gtk4) -lm
 
       - name: Create app bundle
         run: |

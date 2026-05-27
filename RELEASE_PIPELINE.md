@@ -19,16 +19,18 @@ La pipeline di GitHub Actions gestisce automaticamente il build e il packaging p
 
 ## 📦 Artefatti prodotti
 
-| Piattaforma | File | Descrizione |
-|-------------|------|-------------|
-| Linux | `gtkapp.flatpak` | Flatpak con sandboxing GNOME 46 |
-| macOS | `GtkApp.dmg` | DMG universale (Apple Silicon + Intel) |
-| Windows | `gtkapp-setup.exe` | Installer che auto-rileva architettura (x64/ARM64) |
+| Piattaforma | File               | Descrizione                                        |
+| ----------- | ------------------ | -------------------------------------------------- |
+| Linux       | `gtkapp.flatpak`   | Flatpak con sandboxing GNOME 46                    |
+| macOS       | `GtkApp.dmg`       | DMG universale (Apple Silicon + Intel)             |
+| Windows     | `gtkapp-setup.exe` | Installer che auto-rileva architettura (x64/ARM64) |
 
 ## ⚙️ Personalizzazione
 
 ### Flatpak
+
 Modifica `flatpak/io.github.tuouser.GtkApp.json`:
+
 ```json
 {
     "app-id": "io.github.TUOUSER.GtkApp",
@@ -37,7 +39,9 @@ Modifica `flatpak/io.github.tuouser.GtkApp.json`:
 ```
 
 ### macOS (Info.plist)
+
 Crea `flatpak/Info.plist` per il bundle .app:
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -54,7 +58,9 @@ Crea `flatpak/Info.plist` per il bundle .app:
 ```
 
 ### Windows (Inno Setup)
+
 Personalizza `setup.iss`:
+
 - Cambia `MyAppName`, `MyAppPublisher`, `MyAppURL`
 - Aggiungi file aggiuntivi o modifica cartelle di installazione
 
@@ -74,14 +80,17 @@ Personalizza `setup.iss`:
 ## 🐛 Troubleshooting
 
 **Errore: "ISCC non trovato"**
+
 - Verifica che Inno Setup 6 sia installato su Windows Runner
 - Il job `windows-installer` lo installa automaticamente con `choco`
 
 **Errore durante cross-compile Windows**
+
 - Assicurati che i pacchetti MinGW siano disponibili su Ubuntu
 - Verifica: `sudo apt install x86_64-w64-mingw32-gcc`
 
 **DMG non crea correttamente**
+
 - Verifica che `flatpak/Info.plist` esista
 - Verifica che `flatpak/icon.icns` esista (file icone macOS)
 
