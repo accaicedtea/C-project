@@ -25,26 +25,10 @@
     },
     "modules": [
         {
-            "name": "libpq",
-            "buildsystem": "autotools",
-            "subdir": "src/interfaces/libpq",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://ftp.postgresql.org/pub/source/v15.5/postgresql-15.5.tar.gz",
-                    "sha256": "9f29a89e5ffd0ed0cdf44e53df244f52a30f9e010333f46031d753815fa9ca67"
-                }
-            ],
-            "cleanup": [
-                "/bin/*",
-                "/share/*"
-            ]
-        },
-        {
             "name": "gtkapp",
             "buildsystem": "simple",
             "build-commands": [
-                "export PKG_CONFIG_PATH=/app/lib/pkgconfig:/app/share/pkgconfig:$PKG_CONFIG_PATH && gcc -Wall -Wextra -Werror -O2 -std=c11 -Iinclude $(pkg-config --cflags gtk4 libpq) -o gtkapp src/utils/gesture_manager.c src/utils/animations.c src/main.c src/controller/app_controller.c src/model/app_model.c src/utils/db_connection.c src/view/app_view.c $(pkg-config --libs gtk4 libpq) -lm && install -Dm755 gtkapp /app/bin/gtkapp"
+                "export PKG_CONFIG_PATH=/app/lib/pkgconfig:/app/share/pkgconfig:$PKG_CONFIG_PATH && gcc -Wall -Wextra -Werror -O2 -std=c11 -Iinclude $(pkg-config --cflags gtk4) -o gtkapp src/utils/gesture_manager.c src/utils/animations.c src/main.c src/controller/app_controller.c src/model/app_model.c src/view/app_view.c $(pkg-config --libs gtk4) -lm && install -Dm755 gtkapp /app/bin/gtkapp"
             ],
             "sources": [
                 {
