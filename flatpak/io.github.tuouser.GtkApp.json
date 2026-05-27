@@ -32,7 +32,7 @@
                 {
                     "type": "archive",
                     "url": "https://ftp.postgresql.org/pub/source/v15.5/postgresql-15.5.tar.gz",
-                    "sha256": "a1e6f8ae5e5a2b9c0f8e7c6d5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f"
+                    "sha256": "9f29a89e5ffd0ed0cdf44e53df244f52a30f9e010333f46031d753815fa9ca67"
                 }
             ],
             "cleanup": [
