@@ -1,19 +1,11 @@
 name: Build and Package for Release
 
-# Si attiva SOLO quando viene pubblicata una Release su GitHub
 on:
   release:
     types: [published]
 
-# Diamo un nome agli artefatti condivisi tra i job
-env:
-  ARTIFACT_NAME_WIN_X64: windows-x86_64-binary
-  ARTIFACT_NAME_WIN_ARM64: windows-arm64-binary
-
 jobs:
-  # ─────────────────────────────────────────────
   # LINUX – Flatpak
-  # ─────────────────────────────────────────────
   linux-flatpak:
     runs-on: ubuntu-latest
     container:
@@ -36,38 +28,34 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # ─────────────────────────────────────────────
-  # MACOS – .dmg universale
-  # ─────────────────────────────────────────────
+  # MACOS – .dmg
   macos-dmg:
     runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: |
-          brew install gtk4
+      - name: Install GTK4
+        run: brew install gtk4
 
       - name: Build binary
         run: |
           mkdir -p build
           gcc -O2 -Wall -Wextra -std=c11 $(pkg-config --cflags gtk4) -o build/gtkapp src/utils/gesture_manager.c src/utils/animations.c src/*.c src/**/*.c $(pkg-config --libs gtk4) -lm
+
+      - name: Create app bundle
         run: |
           mkdir -p GtkApp.app/Contents/MacOS
           mkdir -p GtkApp.app/Contents/Resources
           cp build/gtkapp GtkApp.app/Contents/MacOS/
           cp flatpak/Info.plist GtkApp.app/Contents/
-          if [ -f flatpak/icon.icns ]; then cp flatpak/icon.icns GtkApp.app/Contents/Resources/; fi
 
-      - name: Create .dmg
+      - name: Create DMG
         run: hdiutil create -volname "GtkApp" -srcfolder "GtkApp.app" -ov -format UDZO "GtkApp.dmg"
 
-      - name: Upload .dmg to Release
+      - name: Upload DMG to Release
         uses: softprops/action-gh-release@v2
         with:
           files: GtkApp.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
