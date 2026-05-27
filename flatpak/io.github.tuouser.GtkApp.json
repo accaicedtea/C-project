@@ -1,0 +1,38 @@
+{
+    "app-id": "io.github.tuouser.GtkApp",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "46",
+    "sdk": "org.gnome.Sdk",
+    "command": "gtkapp",
+    "finish-args": [
+        "--share=ipc",
+        "--socket=fallback-x11",
+        "--socket=wayland"
+    ],
+    "cleanup": [
+        "/include",
+        "/lib/pkgconfig",
+        "/man",
+        "/share/doc",
+        "/share/man",
+        "*.la",
+        "*.a"
+    ],
+    "modules": [
+        {
+            "name": "gtkapp",
+            "buildsystem": "simple",
+            "build-commands": [
+                "gcc -Wall -Wextra -Werror -O2 -std=c11 $(pkg-config --cflags gtk4) -o gtkapp src/utils/gesture_manager.c src/utils/animations.c src/*.c src/**/*.c $(pkg-config --libs gtk4) -lm",
+                "install -Dm755 gtkapp /app/bin/gtkapp"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/tuouser/gtkapp.git",
+                    "commit": "@COMMIT@"
+                }
+            ]
+        }
+    ]
+}

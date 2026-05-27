@@ -1,0 +1,160 @@
+name: Build and Package for Release
+
+# Si attiva SOLO quando viene pubblicata una Release su GitHub
+on:
+  release:
+    types: [published]
+
+# Diamo un nome agli artefatti condivisi tra i job
+env:
+  ARTIFACT_NAME_WIN_X64: windows-x86_64-binary
+  ARTIFACT_NAME_WIN_ARM64: windows-arm64-binary
+
+jobs:
+  # ─────────────────────────────────────────────
+  # LINUX – Flatpak
+  # ─────────────────────────────────────────────
+  linux-flatpak:
+    runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:gnome-46
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Flatpak
+        uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: gtkapp.flatpak
+          manifest-path: flatpak/io.github.tuouser.GtkApp.json
+          cache-key: flatpak-builder-${{ github.sha }}
+
+      - name: Upload Flatpak to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: gtkapp.flatpak
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─────────────────────────────────────────────
+  # MACOS – .dmg universale
+  # ─────────────────────────────────────────────
+  macos-dmg:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install gtk4 gtk-mac-bundler jhbuild
+
+      - name: Build universal binary
+        run: |
+          gcc -target arm64-apple-macos11 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -c src/utils/gesture_manager.c -o build-arm64/gesture_manager.o
+          gcc -target arm64-apple-macos11 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -c src/utils/animations.c -o build-arm64/animations.o
+          gcc -target arm64-apple-macos11 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -o build/gtkapp-arm64 build-arm64/*.o src/*.c src/**/*.c $(pkg-config --cflags --libs gtk4) -lm
+          
+          gcc -target x86_64-apple-macos10.12 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -c src/utils/gesture_manager.c -o build-x64/gesture_manager.o
+          gcc -target x86_64-apple-macos10.12 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -c src/utils/animations.c -o build-x64/animations.o
+          gcc -target x86_64-apple-macos10.12 -O2 -Wall -Wextra -std=c11 -I/usr/local/opt/gtk4/include -o build/gtkapp-x86_64 build-x64/*.o src/*.c src/**/*.c $(pkg-config --cflags --libs gtk4) -lm
+          
+          lipo -create -output build/gtkapp build/gtkapp-arm64 build/gtkapp-x86_64
+
+      - name: Bundle into .app
+        run: |
+          mkdir -p GtkApp.app/Contents/MacOS
+          mkdir -p GtkApp.app/Contents/Resources
+          cp build/gtkapp GtkApp.app/Contents/MacOS/
+          cp flatpak/Info.plist GtkApp.app/Contents/
+          cp flatpak/icon.icns GtkApp.app/Contents/Resources/
+
+      - name: Create .dmg
+        run: hdiutil create -volname "GtkApp" -srcfolder "GtkApp.app" -ov -format UDZO "GtkApp.dmg"
+
+      - name: Upload .dmg to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: GtkApp.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─────────────────────────────────────────────
+  # WINDOWS – cross‑compilazione dei due eseguibili (su Linux)
+  # ─────────────────────────────────────────────
+  windows-cross-compile:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64, aarch64]
+    env:
+      MINGW_PREFIX: ${{ matrix.arch == 'x86_64' && 'x86_64-w64-mingw32' || 'aarch64-w64-mingw32' }}
+    outputs:
+      artifact-name-x64: ${{ env.ARTIFACT_NAME_WIN_X64 }}
+      artifact-name-arm64: ${{ env.ARTIFACT_NAME_WIN_ARM64 }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install cross‑compiler & GTK4
+        run: |
+          sudo apt update
+          sudo apt install -y ${{ env.MINGW_PREFIX }}-gcc \
+                              ${{ env.MINGW_PREFIX }}-pkg-config \
+                              ${{ env.MINGW_PREFIX }}-gtk4
+
+      - name: Compile
+        run: |
+          mkdir -p build-${{ matrix.arch }}
+          ${{ env.MINGW_PREFIX }}-gcc -O2 -Wall -Wextra -std=c11 -o build-${{ matrix.arch }}/gtkapp.exe src/utils/gesture_manager.c src/utils/animations.c src/*.c src/**/*.c \
+            $( ${{ env.MINGW_PREFIX }}-pkg-config --cflags --libs gtk4 ) -lm
+
+      - name: Collect DLLs and resources
+        run: bash scripts/collect-windows-dlls.sh ${{ env.MINGW_PREFIX }} build-${{ matrix.arch }}
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.arch == 'x86_64' && env.ARTIFACT_NAME_WIN_X64 || env.ARTIFACT_NAME_WIN_ARM64 }}
+          path: build-${{ matrix.arch }}/*
+
+  # ─────────────────────────────────────────────
+  # WINDOWS – creazione installer Inno Setup (esegue su Windows)
+  # ─────────────────────────────────────────────
+  windows-installer:
+    needs: windows-cross-compile
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download x64 binary artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME_WIN_X64 }}
+          path: dist/win-x64
+
+      - name: Download ARM64 binary artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME_WIN_ARM64 }}
+          path: dist/win-arm64
+
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup --yes
+          # Verifica che ISCC sia nel PATH
+          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /?
+
+      - name: Create installer
+        run: |
+          # Il nostro script Inno Setup (setup.iss) si trova nella root del repo
+          "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" setup.iss
+        shell: pwsh
+
+      - name: Upload installer to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Output/gtkapp-setup.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
